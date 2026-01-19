@@ -4,7 +4,7 @@ export default defineConfig({
   id: "autocomplete",
   name: "Autocomplete",
   description: "Autocomplete for Caido",
-  version: "1.0.0",
+  version: "1.0.4",
   author: {
     name: "insomnia1102",
   },
