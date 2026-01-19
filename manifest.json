@@ -1,0 +1,19 @@
+{
+  "id": "autocomplete",
+  "name": "Autocomplete",
+  "version": "1.0.0",
+  "description": "Autocomplete for Caido",
+  "author": {
+    "name": "insomnia1102",
+    "email": "marucube35@gmail.com",
+    "url": "https://github.com/aleister1102/autocomplete-caido"
+  },
+  "plugins": [
+    {
+      "kind": "frontend",
+      "id": "autocomplete-frontend",
+      "name": "Autocomplete",
+      "entrypoint": "dist/frontend/index.js"
+    }
+  ]
+}

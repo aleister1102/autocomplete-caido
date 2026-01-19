@@ -1,0 +1,22 @@
+{
+  "name": "caido-autocomplete",
+  "version": "1.0.0",
+  "description": "Autocomplete for Caido",
+  "type": "module",
+  "author": "aleister1102",
+  "scripts": {
+    "build": "caido-dev build",
+    "package": "bun scripts/package.mjs",
+    "watch": "caido-dev watch"
+  },
+  "dependencies": {
+    "@caido/sdk-frontend": "^0.54.1",
+    "@codemirror/autocomplete": "^6.18.3",
+    "@codemirror/state": "^6.4.1",
+    "@codemirror/view": "^6.34.1"
+  },
+  "devDependencies": {
+    "@caido-community/dev": "^0.1.6",
+    "typescript": "^5.7.3"
+  }
+}
