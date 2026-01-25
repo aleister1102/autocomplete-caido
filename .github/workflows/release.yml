@@ -13,16 +13,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
 
       - name: Install dependencies
-        run: npm install
+        run: bun install
 
-      - name: Build plugin
-        run: npm run build
+      - name: Build and Package
+        run: |
+          bun run build
+          bun run package
+
+      - name: Generate Checksums
+        run: |
+          cd dist
+          sha256sum plugin_package.zip > checksums.txt
 
       - name: Sign plugin
         run: |
@@ -36,3 +41,4 @@ jobs:
           files: |
             dist/plugin_package.zip
             plugin_package.zip.sig
+            dist/checksums.txt
