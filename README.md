@@ -29,6 +29,30 @@ This plugin provides autocompletion features for Caido, inspired by the HopLa Bu
 - Watch (hot rebuild): `bun run watch`
 - Packaging script: `bun scripts/package.mjs`
 
+## Releasing
+
+To publish a new version of the plugin, follow these steps:
+
+1. **Bump Version**: Update the version in `package.json` and `manifest.json`.
+   ```json
+   "version": "1.0.x"
+   ```
+2. **Commit and Push**:
+   ```bash
+   git add package.json manifest.json
+   git commit -m "chore: bump version to 1.0.x"
+   git push origin main
+   ```
+3. **Create Tag**: Push a tag matching `v*` to trigger the release workflow.
+   ```bash
+   git tag v1.0.x
+   git push origin v1.0.x
+   ```
+4. **Automated Release**: GitHub Actions will automatically:
+   - Build the plugin.
+   - Sign the package using the `PRIVATE_KEY` secret.
+   - Create a new GitHub release with the signed `plugin_package.zip`.
+
 ## Troubleshooting
 
 - If you see `Unrecognized extension value ... multiple instances of @codemirror/state`, ensure the bundled build is used. The plugin externalizes CodeMirror so Caido’s built-in instance is used; reinstall the freshly built `dist/plugin_package.zip`.
