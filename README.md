@@ -5,15 +5,18 @@ This plugin provides autocompletion features for Caido, inspired by the HopLa Bu
 ## Features
 
 - Header and keyword autocompletion (common HTTP headers, verbs, content-types)
-- Payload library integration (XSS, SQLi, LFI, SSTI, etc.)
-- Custom keyboard shortcut (`Ctrl+Q`) to force-show suggestions
+- Versioned payload library for XSS, SQL injection, LFI, SSTI, and other security tests
+- `Ctrl+Shift+Space` (or `Cmd+Shift+Space` on macOS) to open suggestions, `Tab` or `Enter` to accept one
+- Registered in Caido's Command Palette (`Cmd+K` / `Ctrl+K`) as "Trigger Autocomplete Suggestions"
 - Registered across all major request editors (HTTP History, Replay, Search, Sitemap, Automate, Findings)
 
 ## Usage
 
 - Start typing in a request editor to see context-aware suggestions
-- Press `Ctrl+Q` to trigger the autocompletion popup manually
-- Suggestions include headers/verbs/content-types and payload snippets (XSS, SQLi, LFI, SSTI)
+- Press `Ctrl+Shift+Space` (or `Cmd+Shift+Space` on macOS) to open the suggestion popup manually
+- Or open Caido's Command Palette with `Cmd+K` / `Ctrl+K` and run **Trigger Autocomplete Suggestions**
+- Press `Tab` or `Enter` to accept the highlighted suggestion. `Tab` still indents when no suggestion is open
+- Payload suggestions become available after the catalog loads on the first completion request
 
 ## Installation
 
@@ -22,6 +25,8 @@ This plugin provides autocompletion features for Caido, inspired by the HopLa Bu
    bun run build
    ```
 2) Load `dist/plugin_package.zip` in Caido via Plugins → Install.
+
+The plugin needs network access the first time it loads payload suggestions. Header and keyword suggestions continue to work if the catalog is unavailable.
 
 ## Development
 
@@ -33,22 +38,23 @@ This plugin provides autocompletion features for Caido, inspired by the HopLa Bu
 
 To publish a new version of the plugin, follow these steps:
 
-1. **Bump Version**: Update the version in `package.json` and `manifest.json`.
+1. **Bump the version**: Update the version in `package.json`. The build uses it for the generated plugin manifest and the versioned catalog URL.
    ```json
    "version": "1.0.x"
    ```
-2. **Commit and Push**:
+2. **Update the catalog hash when needed**: If `payloads/security.json` changed, run `shasum -a 256 payloads/security.json` and copy the digest to `PAYLOAD_PACK_SHA256` in `src/frontend/src/completions/payloads.ts`.
+3. **Commit and Push**:
    ```bash
-   git add package.json manifest.json
+   git add package.json payloads/security.json src/frontend/src/completions/payloads.ts
    git commit -m "chore: bump version to 1.0.x"
    git push origin main
    ```
-3. **Create Tag**: Push a tag matching `v*` to trigger the release workflow.
+4. **Create Tag**: Push a tag matching `v*` to trigger the release workflow.
    ```bash
    git tag v1.0.x
    git push origin v1.0.x
    ```
-4. **Automated Release**: GitHub Actions will automatically:
+5. **Automated Release**: GitHub Actions will automatically:
    - Build the plugin.
    - Sign the package using the `PRIVATE_KEY` secret.
    - Create a new GitHub release with the signed `plugin_package.zip`.
@@ -57,14 +63,12 @@ To publish a new version of the plugin, follow these steps:
 
 - If you see `Unrecognized extension value ... multiple instances of @codemirror/state`, ensure the bundled build is used. The plugin externalizes CodeMirror so Caido’s built-in instance is used; reinstall the freshly built `dist/plugin_package.zip`.
 
-## Security & AV False Positives
+## Payload catalog and Windows security
 
-Some antivirus engines (like Windows Defender) may flag this plugin as a "HackTool" or "Trojan" because it contains a library of common security testing payloads (e.g., reverse shell strings, web shells, and exploitation snippets). 
+The install archive does not contain the security payload strings. On the first completion request, the plugin downloads `payloads/security.json` from the matching version tag in this repository. It verifies the catalog against a pinned SHA-256 digest before parsing it.
 
-These payloads are strictly used for **autocompletion suggestions** in the Caido request editor and are never executed by the plugin. 
+The parsed catalog stays in memory for the current Caido session. It is not written to plugin storage. If the download or integrity check fails, header and keyword suggestions still work and Caido logs the catalog error.
 
-To verify the integrity of the plugin:
-1. Check the SHA256 checksum of the `plugin_package.zip`.
-2. Verify the digital signature `plugin_package.zip.sig` using the public key found in the [Caido Store](https://github.com/caido/caido-toolbox/blob/master/store/plugin_packages.json).
+This design keeps known shell and exploit signatures out of `plugin_package.zip`, where Windows security products can block installation or quarantine part of the plugin. It does not use encryption, encoding, or runtime decryption. Catalog parsing and completion-option construction happen once, so normal completion requests reuse the same option objects.
 
-If you are using this in a professional environment and experience a block, you may need to add an exclusion for the Caido plugin directory or the specific zip file.
+The source catalog remains plain JSON for review and auditing. Windows security products can still flag the catalog when someone downloads or clones the source repository, but that no longer prevents installing the plugin package.
