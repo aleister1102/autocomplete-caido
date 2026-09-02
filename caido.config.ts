@@ -1,10 +1,11 @@
 import { defineConfig } from "@caido-community/dev";
+import packageMetadata from "./package.json";
 
 export default defineConfig({
   id: "autocomplete",
   name: "Autocomplete",
   description: "Autocomplete for Caido",
-  version: "1.0.4",
+  version: packageMetadata.version,
   author: {
     name: "insomnia1102",
   },
