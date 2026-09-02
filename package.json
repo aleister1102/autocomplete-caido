@@ -1,6 +1,6 @@
 {
   "name": "caido-autocomplete",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Autocomplete for Caido",
   "type": "module",
   "author": "aleister1102",
@@ -10,7 +10,7 @@
     "watch": "caido-dev watch"
   },
   "dependencies": {
-    "@caido/sdk-frontend": "^0.48.0",
+    "@caido/sdk-frontend": "^0.54.1",
     "@codemirror/autocomplete": "^6.18.3",
     "@codemirror/state": "^6.4.1",
     "@codemirror/view": "^6.34.1"

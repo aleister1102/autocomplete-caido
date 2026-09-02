@@ -1,31 +1,12 @@
-import { existsSync, rmSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { execSync } from "node:child_process";
 
-const rootDir = process.cwd();
-const distDir = join(rootDir, "dist");
-const packageDir = join(distDir, "plugin_package");
-const outFile = join(distDir, "plugin_package.zip");
+const outFile = join(process.cwd(), "dist", "plugin_package.zip");
 
-if (!existsSync(packageDir)) {
-  console.error('JQ: dist/plugin_package not found. Run `bun run build` first.');
+if (!existsSync(outFile)) {
+  console.error('JQ: dist/plugin_package.zip not found. Run `bun run build` first.');
   process.exit(1);
 }
 
-if (existsSync(outFile)) {
-  rmSync(outFile);
-}
-
-// Ensure the zip command is available.
-try {
-  execSync("zip -v", { stdio: "ignore" });
-} catch {
-  console.error("JQ: zip command not available on this system.");
-  process.exit(1);
-}
-
-// Zip the CONTENTS of dist/plugin_package/ so manifest.json is at the zip root.
-execSync(`cd "${packageDir}" && zip -r "${outFile}" .`, { stdio: "inherit" });
-
-console.log(`JQ: created ${outFile}`);
+console.log(`JQ: using ${outFile} created by caido-dev`);
 

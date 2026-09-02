@@ -1,4 +1,4 @@
-# Microsoft Defender False Positive Submission Details
+# Legacy Microsoft Defender false-positive record
 
 **Submission URL:** [https://www.microsoft.com/en-us/wdsi/filesubmission](https://www.microsoft.com/en-us/wdsi/filesubmission)
 
@@ -8,18 +8,15 @@
 - **Product:** Microsoft Defender for Endpoint / Microsoft Defender Antivirus
 - **Category:** Software developer (False Positive)
 
-## Explanation
-This file is a benign security testing plugin (Autocomplete) for the **Caido** security platform. It provides autocompletion features for security researchers and penetration testers.
+## Historical explanation
 
-The reason for the detection is that the plugin intentionally contains a library of static security testing payloads, including:
-- XSS payloads
-- SQL injection snippets
-- SSRF and XXE templates
-- Common reverse shell strings and web shell snippets
+Version 1.0.4 bundled a static security-testing catalog for Caido. The catalog included XSS, SQL injection, SSRF, XXE, reverse-shell, and web-shell strings. Those strings were used only as editor suggestions, but compiling them into `autocomplete-frontend/index.js` caused Microsoft Defender to classify the install archive as a security tool or threat.
 
-These strings are stored in `src/shared/payloads.ts` and compiled into the frontend bundle `autocomplete-frontend/index.js`. They are used **only** for displaying autocompletion suggestions in a code editor and are **never** executed by the plugin itself.
+## Current packaging
 
-## Verification & Provenance
+Starting with version 1.0.7, `plugin_package.zip` no longer contains the payload catalog. The plugin downloads the plain JSON catalog from the matching repository tag on first use, verifies its SHA-256 digest, and keeps the parsed data in memory for the current session. The plugin does not execute catalog values, encrypt them, or write them to plugin storage.
+
+## Verification and provenance
 - **Source Code:** [https://github.com/caido/caido-toolbox/tree/master/plugins/Autocomplete](https://github.com/caido/caido-toolbox/tree/master/plugins/Autocomplete)
 - **Official Store Listing:** [https://github.com/caido/caido-toolbox/blob/master/store/plugin_packages.json](https://github.com/caido/caido-toolbox/blob/master/store/plugin_packages.json)
 - **Release Page:** [https://github.com/aleister1102/autocomplete-caido/releases](https://github.com/aleister1102/autocomplete-caido/releases)
